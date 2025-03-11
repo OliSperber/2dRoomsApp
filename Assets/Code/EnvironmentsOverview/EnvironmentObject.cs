@@ -70,7 +70,7 @@ public class EnvironmentObject : MonoBehaviour
     {
         Loading.On();
 
-        IWebRequestReponse response = await ApiClient.DeleteEnvironment(environment.id);
+        IWebRequestReponse response = await ApiClient.DeleteEnvironment(this.environment.id);
 
         switch (response)
         {
