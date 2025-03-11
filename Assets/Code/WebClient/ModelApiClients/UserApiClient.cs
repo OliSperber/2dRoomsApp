@@ -10,12 +10,22 @@ public class UserApiClient : MonoBehaviour
         string route = "/account/register";
         string data = JsonUtility.ToJson(user);
 
-        return await WebClient.instance.SendPostRequest(route, data);
+        Debug.Log(data);
+
+        if (WebClient.instance != null)
+        {
+           return await WebClient.instance.SendPostRequest(route, data);
+        }
+        else
+        {
+            Debug.LogError("WebClient singleton is not initialized.");
+            return null;
+        }
     }
 
     public async Awaitable<IWebRequestReponse> Login(User user)
     {
-        string route = "/account/login";
+        string route = "/account/login/jwt";
         string data = JsonUtility.ToJson(user);
 
         IWebRequestReponse response = await WebClient.instance.SendPostRequest(route, data);
