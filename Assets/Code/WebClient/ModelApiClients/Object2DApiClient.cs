@@ -1,22 +1,40 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Object2DApiClient : MonoBehaviour
 {
     public async Awaitable<IWebRequestReponse> ReadObject2Ds(string environmentId)
     {
-        string route = "/environment2d/" + environmentId + "/object2d";
+        string route = "/api/environment2d/" + environmentId + "/object2d";
 
         IWebRequestReponse webRequestResponse = await WebClient.instance.SendGetRequest(route);
         return ParseObject2DListResponse(webRequestResponse);
     }
+    public async Awaitable DeleteObject2Ds(string environmentId)
+    {
+        string route = "/api/environment2d/" + environmentId + "/object2d";
+
+
+        IWebRequestReponse webRequestResponse = await WebClient.instance.SendDeleteRequest(route);
+    }
+
+
 
     public async Awaitable<IWebRequestReponse> CreateObject2D(Object2D object2D)
     {
-        string route = "/environment2d/" + object2D.environmentId + "/object2d";
-        string data = JsonUtility.ToJson(object2D);
+        string route = "/api/environment2d/" + object2D.environmentId + "/object2d";
+
+        // Convert environment to JSON while excluding the id field
+        var tempEnvironment = object2D;
+        tempEnvironment.id = null; 
+
+        string data = JsonUtility.ToJson(tempEnvironment);
+
+        Debug.Log(data);
+
 
         IWebRequestReponse webRequestResponse = await WebClient.instance.SendPostRequest(route, data);
         return ParseObject2DResponse(webRequestResponse);
@@ -24,7 +42,7 @@ public class Object2DApiClient : MonoBehaviour
 
     public async Awaitable<IWebRequestReponse> UpdateObject2D(Object2D object2D)
     {
-        string route = "/environment2d/" + object2D.environmentId + "/object2d/" + object2D.id;
+        string route = "/api/environment2d/" + object2D.environmentId + "/object2d/" + object2D.id;
         string data = JsonUtility.ToJson(object2D);
 
         return await WebClient.instance.SendPutRequest(route, data);

@@ -3,11 +3,10 @@ using System;
 [Serializable]
 public class Object2D
 {
-    public string id;
+    // Ensure that the id can be set from the JSON or auto-generated if not present
+    public string id = Guid.NewGuid().ToString(); // Default to new GUID
 
-    public string environmentId;
-
-    public string prefabId;
+    public int prefabId;
 
     public float positionX;
 
@@ -17,7 +16,9 @@ public class Object2D
 
     public float scaleY;
 
-    public float rotationZ;
+    public float rotationZ = 0;
 
-    public int sortingLayer;
+    public int sortingLayer = 1;
+
+    public string environmentId;
 }

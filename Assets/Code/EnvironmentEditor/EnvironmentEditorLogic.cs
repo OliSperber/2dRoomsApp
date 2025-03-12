@@ -1,17 +1,13 @@
-using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
-public class EnvironmentViewerLogic : MonoBehaviour
+public class EnvironmentEditorLogic : MonoBehaviour
 {
     public GameObject environmentPrefab;
-    public CameraController cameraController;  // Reference to CameraController
+    public CameraController cameraController;
     public Environment2DApiClient EnvironmentClient;
     public Object2DApiClient ObjectClient;
 
@@ -23,21 +19,23 @@ public class EnvironmentViewerLogic : MonoBehaviour
 
     private string environmentId;
     private Environment2D environment;
+    private List<Object> objects = new();
+
+    public Button SafeButton;
+    public SafingEnvironmentLogic SafeHandler;
 
     void Start()
     {
-        environment = SceneDataEnvironmentViewer.environment;  // Retrieve the ID
-        Debug.Log(environment.id.ToString());
+        environment = SceneDataEnvironmentEditor.environment;
         GenerateMap();
+
+        SafeButton.onClick.AddListener(() => _ = SafeEnvironment());
     }
 
     private int frameCount = 0;
-
     private async void Update()
     {
         frameCount++;
-
-
 
         if (frameCount == 2) // Trigger on second frame
         {
@@ -72,33 +70,49 @@ public class EnvironmentViewerLogic : MonoBehaviour
             case WebRequestData<string> webRequestResponse:
                 Debug.Log(webRequestResponse.Data);
                 break;
-        }   
+        }
 
         Loading.Off();
         return objects;
     }
 
-
     void GenerateMap()
     {
-        // Example: Instantiate with specific dimensions
+        // Instantiate prefab
         GameObject environmentInstance = Instantiate(environmentPrefab, Vector3.zero, Quaternion.identity);
 
-        // Initialize the layout with custom width and height
+        // Give custom width and height
         EnvironmentLayout layout = environmentInstance.GetComponent<EnvironmentLayout>();
         layout.InitializeLayout(environment.maxWidth, environment.maxHeight);
 
-        // Initialize the camere movement
+        // Initialize the camere movement with maxHeight and maxWidth
         cameraController.Initialize(environment.maxWidth, environment.maxHeight);
     }
 
-    // New method to instantiate an Object in the environment
+    // Method to instantiate an Object in the environment
     public void InstantiateObject(Object2D object2D)
     {
+        // Ensure the ObjectPrefab is a GameObject
         Object newObject = Instantiate(ObjectPrefab, Position, Quaternion.identity);
 
-        newObject.DisplayedObject = object2D;
-        newObject.PlaceInLayout();
+        // Now you can access GameObject-specific properties
+        newObject.GetComponent<Object>().environmentHeight = environment.maxHeight;
+        newObject.GetComponent<Object>().environmentWidth = environment.maxWidth;
+        newObject.GetComponent<Object>().SafeButton = this.SafeButton;
+        newObject.GetComponent<Object>().DisplayedObject = object2D;
+        newObject.GetComponent<Object>().EditAble = true;
+        newObject.GetComponent<Object>().PlaceInLayout();
+
+        objects.Add(newObject);
+    }
+
+    private async Awaitable SafeEnvironment()
+    {
+        await SafeHandler.SafeEnvironment(objects);
+
+        ColorBlock colors = SafeButton.colors;
+        colors.normalColor = new Color32(241, 241, 241, 255); 
+        SafeButton.colors = colors;
     }
 
     public void BackButton()

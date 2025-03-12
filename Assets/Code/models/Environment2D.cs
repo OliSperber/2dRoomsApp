@@ -8,7 +8,7 @@ public class Environment2D
     public string name;
 
     public int maxWidth;
-
+    
     public int maxHeight;
 
     public string userId = "";

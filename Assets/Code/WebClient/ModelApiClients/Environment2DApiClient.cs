@@ -19,9 +19,11 @@ public class Environment2DApiClient : MonoBehaviour
 
         // Convert environment to JSON while excluding the id field
         var tempEnvironment = environment;
-        tempEnvironment.id = null; // Assuming id is nullable or default to 0
+        tempEnvironment.id = null; 
+
 
         string data = JsonUtility.ToJson(tempEnvironment);
+
 
         IWebRequestReponse webRequestResponse = await WebClient.instance.SendPostRequest(route, data);
         return ParseEnvironment2DResponse(webRequestResponse);

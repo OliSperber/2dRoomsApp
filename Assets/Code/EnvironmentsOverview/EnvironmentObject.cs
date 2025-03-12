@@ -58,12 +58,14 @@ public class EnvironmentObject : MonoBehaviour
 
     private void OnViewClicked()
     {
-        Debug.Log("View button clicked");
+        SceneDataEnvironmentViewer.environment = environment;
+        SceneManager.LoadScene("EnvironmentViewer");
     }
 
     private void OnEditClicked()
     {
-        Debug.Log("Edit button clicked");
+        SceneDataEnvironmentEditor.environment = environment;
+        SceneManager.LoadScene("EnvironmentEditor");
     }
 
     private async Task OnDeleteClicked()
