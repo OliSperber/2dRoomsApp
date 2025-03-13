@@ -75,8 +75,8 @@ public class SafingEnvironmentLogic : MonoBehaviour
         {
             id = Guid.NewGuid().ToString(),
             prefabId = object2d.DisplayedObject.prefabId,
-            positionX = object2d.transform.position.x - 0.5f,
-            positionY = object2d.transform.position.y - 0.5f,
+            positionX = object2d.transform.position.x + 0.5f,
+            positionY = object2d.transform.position.y + 0.5f,
             scaleX = object2d.DisplayedObject.scaleX,
             scaleY = object2d.DisplayedObject.scaleY,
             rotationZ = 0,
